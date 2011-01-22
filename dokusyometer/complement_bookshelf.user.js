@@ -10,10 +10,17 @@ var obj = {
   getCategories: function(){
     var self = this;
     if (! self.categories.length) {
+      //TODO サイトのHTML依存
+      var uid = $('div#top > div.inner > a:first').attr('href');
+      if (uid.search(/^\/u\/\d+$/) == -1) {
+        console.log('not found user\'s my page.');
+        return self.categories;
+      }
       var html = $.ajax({
-        url:"/u/31418/cat", 
-        async:false,
+        url: uid + '/cat', 
+        async: false,
       }).responseText;
+      //TODO サイトのHTML依存
       $(html).find('#side_left > div.inner > ul > li').each(function(){
         self.categories.push($(this).text().replace(/\(\d+\)$/, ''));
       });
@@ -30,29 +37,32 @@ var obj = {
   },
   ready: function(){
     var self = this;
+    //TODO サイトのHTML依存
     var area = $('div.book_edit_area');
-    area.append('<div id="' + self.div_id + '"></div>');
-    self.hide();
+    if (area.size() > 0) {
+      area.append('<div id="' + self.div_id + '"></div>');
+      self.hide();
 
-    var categories = self.getCategories();
-    //TODO 半角スペースと全角スペースわかりやすく
-    var input_categories = self.input_tag.val().split(/[ 　]+/);
-    $.each(categories, function(){
-      var category = this.replace(/ /g, '');
-      if ($.inArray(category, input_categories) >= 0) {
-        //TODO rgb値を定数に
-        $('#' + self.div_id).append('<span class="' + self.category_class + '" style="background-color:rgb(255,255,0);">' + category + '</span>')
-      } else {
-        $('#' + self.div_id).append('<span class="' + self.category_class + '">' + category + '</span>')
-      }
-    });
-    $('.' + self.category_class).click(function(){obj.category_toggle(this)});
-    $('.' + self.category_class).css({
-      'margin':'0px 2px',
-      'cursor':'pointer',
-      'text-decoration':'underline',
-    });
-    self.show();
+      var categories = self.getCategories();
+      //TODO 半角スペースと全角スペースわかりやすく
+      var input_categories = self.input_tag.val().split(/[ 　]+/);
+      $.each(categories, function(){
+        var category = this.replace(/ /g, '');
+        if ($.inArray(category, input_categories) >= 0) {
+          //TODO rgb値を定数に
+          $('#' + self.div_id).append('<span class="' + self.category_class + '" style="background-color:rgb(255,255,0);">' + category + '</span>')
+        } else {
+          $('#' + self.div_id).append('<span class="' + self.category_class + '">' + category + '</span>')
+        }
+      });
+      $('.' + self.category_class).click(function(){obj.category_toggle(this)});
+      $('.' + self.category_class).css({
+        'margin':'0px 2px',
+        'cursor':'pointer',
+        'text-decoration':'underline',
+      });
+      self.show();
+    }
   },
   category_toggle: function(obj){
     var self = this;
