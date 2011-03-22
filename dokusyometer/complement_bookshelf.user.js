@@ -11,7 +11,8 @@ var obj = {
     var self = this;
     if (! self.categories.length) {
       //TODO サイトのHTML依存
-      var uid = $('div#top > div.inner > a:first').attr('href');
+      //var uid = $('div#top > div.inner > a:first').attr('href');
+      var uid = $('a#navi_top_link_2').attr('href');
       if (uid.search(/^\/u\/\d+$/) == -1) {
         console.log('not found user\'s my page.');
         return self.categories;
@@ -21,7 +22,7 @@ var obj = {
         async: false,
       }).responseText;
       //TODO サイトのHTML依存
-      $(html).find('#side_left > div.inner > ul > li').each(function(){
+      $(html).find('#side_left > div.inner > ul > li > a').each(function(){
         self.categories.push($(this).text().replace(/\(\d+\)$/, ''));
       });
     }
